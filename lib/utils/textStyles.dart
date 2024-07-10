@@ -836,6 +836,13 @@ TextStyle WARNS = google.GoogleFonts.roboto(
     color: BLACK,
   ),
 );
+TextStyle DETAILS = google.GoogleFonts.roboto(
+  textStyle: const TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: BLACK,
+  ),
+);
 TextStyle hint2 = google.GoogleFonts.roboto(
   textStyle: const TextStyle(
     fontSize: 16,

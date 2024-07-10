@@ -2,8 +2,9 @@
 
 import 'package:medi_alert/modules%20/Settings/view/settings_page.dart';
 import 'package:medi_alert/modules%20/Vitals/view/vitals_page.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar_plus/persistent_bottom_nav_bar_plus.dart';
 
 import '../modules /home/view/home_page.dart';
 import 'colors.dart';
@@ -18,7 +19,7 @@ class BTNAV extends StatelessWidget {
           inactiveColorPrimary: WHITE,
           inactiveIcon: Icon(
             Icons.dashboard_outlined,
-            color: BLACK,
+            color: WHITE,
           ),
           icon: Icon(
             Icons.dashboard_outlined,
@@ -33,7 +34,7 @@ class BTNAV extends StatelessWidget {
             'assets/vital.png',
             width: 24,
             height: 24,
-            color: BLACK,
+            color: WHITE,
           ),
           icon: Image.asset(
             'assets/vital.png',
@@ -50,36 +51,34 @@ class BTNAV extends StatelessWidget {
             'assets/setting.png',
             width: 24,
             height: 24,
-            color: BLACK,
+            color: WHITE,
           ),
           icon: Image.asset(
             'assets/setting.png',
             width: 24,
             height: 24,
-            color: BLACK,
+            color: WHITE,
           ),
           title: "Settings",
           textStyle: btBAV),
-      
     ];
 
     return PersistentTabView(
-      
       context,
       controller: PersistentTabController(initialIndex: 0),
       screens: _buildScreens(),
       items: _navBarItems,
-      confineInSafeArea: false,
-backgroundColor: GREY,
+      confineInSafeArea: true,
+      backgroundColor: Color.fromARGB(255, 239, 236, 236),
       handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       stateManagement: true,
       hideNavigationBar: false,
       hideNavigationBarWhenKeyboardShows: true,
       decoration: NavBarDecoration(
         borderRadius: BorderRadius.circular(5.0),
       ),
-      popAllScreensOnTapOfSelectedTab: true,
+      popAllScreensOnTapOfSelectedTab: false,
       itemAnimationProperties: const ItemAnimationProperties(
         duration: Duration(milliseconds: 50),
         curve: Curves.bounceInOut,

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:medi_alert/auth/Register/view/register_page.dart';
 import 'package:medi_alert/utils/colors.dart';
