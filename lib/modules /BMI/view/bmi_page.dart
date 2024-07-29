@@ -134,7 +134,7 @@ class _BmiPageState extends State<BmiPage> {
                     controller: _weightController,
                     keyboardType: TextInputType.datetime,
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.singleLineFormatter,
+                      FilteringTextInputFormatter.digitsOnly,
                     ],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
@@ -178,7 +178,7 @@ class _BmiPageState extends State<BmiPage> {
                     controller: _heightController,
                     keyboardType: TextInputType.datetime,
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.singleLineFormatter,
+                      FilteringTextInputFormatter.digitsOnly,
                     ],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),

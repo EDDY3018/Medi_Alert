@@ -17,6 +17,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  camera:
+    dependency: "direct main"
+    description:
+      name: camera
+      sha256: dfa8fc5a1adaeb95e7a54d86a5bd56f4bb0e035515354c8ac6d262e35cec2ec8
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.6"
+  camera_android:
+    dependency: transitive
+    description:
+      name: camera_android
+      sha256: eacc70b6c81fa5e17921302fc17a1ae5983d94ce1d76c71e4869abdc615d35d2
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.9+8"
+  camera_avfoundation:
+    dependency: transitive
+    description:
+      name: camera_avfoundation
+      sha256: "95c2f40b4d06cdb0fd2ad893c762d1f2c931a5e370793ec34c939eb4fcbf96bb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.17"
+  camera_platform_interface:
+    dependency: transitive
+    description:
+      name: camera_platform_interface
+      sha256: b3ede1f171532e0d83111fe0980b46d17f1aa9788a07a2fbed07366bbdbb9061
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.8.0"
+  camera_web:
+    dependency: transitive
+    description:
+      name: camera_web
+      sha256: b9235ec0a2ce949daec546f1f3d86f05c3921ed31c7d9ab6b7c03214d152fc2d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.4"
   characters:
     dependency: transitive
     description:
@@ -49,6 +89,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  community_charts_common:
+    dependency: transitive
+    description:
+      name: community_charts_common
+      sha256: d997ade57f15490346de46efbe23805d378a672aafbf5e47e19517964b671009
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
+  community_charts_flutter:
+    dependency: transitive
+    description:
+      name: community_charts_flutter
+      sha256: "4614846b99782ab79b613687704865e5468ecada3f0ad1afe1cdc3ff5b727f72"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
+  cross_file:
+    dependency: transitive
+    description:
+      name: cross_file
+      sha256: "55d7b444feb71301ef6b8838dbc1ae02e63dd48c8773f3810ff53bb1e2945b32"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.4+1"
   crypto:
     dependency: transitive
     description:
@@ -102,6 +166,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: c6b0b4c05c458e1c01ad9bcc14041dd7b1f6783d487be4386f793f47a8a4d03e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.20"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -128,6 +200,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
+  heart_bpm:
+    dependency: "direct main"
+    description:
+      name: heart_bpm
+      sha256: "3651cf368b9b2732fb5b63f244375cc7b932665b1fd13280c70e37621d892936"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+0"
   html:
     dependency: transitive
     description:
@@ -152,6 +232,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -264,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  percentages_with_animation:
+    dependency: "direct main"
+    description:
+      name: percentages_with_animation
+      sha256: "3a87706243f019689f758905789e19495867eeccf062284d3afcd0eddce73e0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.9"
   persistent_bottom_nav_bar_plus:
     dependency: "direct main"
     description:
@@ -317,6 +413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  stream_transform:
+    dependency: transitive
+    description:
+      name: stream_transform
+      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:

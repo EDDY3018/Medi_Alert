@@ -8,11 +8,13 @@ class VitalsCard extends StatelessWidget {
   final String title;
   final String description;
   final String image;
+  final VoidCallback onTap;
 
   const VitalsCard({
     required this.title,
     required this.description,
     required this.image,
+     required this.onTap,
   });
 
   @override
@@ -25,15 +27,19 @@ class VitalsCard extends StatelessWidget {
           elevation: 4,
           child: Column(children: [
             Container(
-              color: BLUE,
               height: 45,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: BLUE,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           title,
@@ -49,21 +55,27 @@ class VitalsCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 20),
                     child: Image.asset(
-                      image,
+                      'assets/forward.png',
                       height: 30,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    description,
-                    style: TextStyle(
-                      color: WHITE,
-                      fontSize: 14,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      description,
+                      style: TextStyle(
+                        color: Colors.black45,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
@@ -71,11 +83,14 @@ class VitalsCard extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 20),
                   child: Image.asset(
                     image,
-                    height: 30,
+                    scale: 3,
                   ),
                 ),
               ],
             ),
+            SizedBox(
+              height: 20,
+            )
           ])),
     );
   }

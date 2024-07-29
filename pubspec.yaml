@@ -39,6 +39,9 @@ dependencies:
   google_fonts: ^6.2.1
   persistent_bottom_nav_bar_plus: ^5.1.1
   chewie_audio: ^1.5.0
+  heart_bpm: ^2.0.0+0
+  percentages_with_animation: ^0.0.9
+  camera: ^0.10.5+5
 
 dev_dependencies:
   flutter_test:
