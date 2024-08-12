@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:medi_alert/modules%20/Vitals/view/widgets/oxygen.dart';
 import 'package:medi_alert/utils/navigator.dart';
 
 import '../../../utils/colors.dart';
 
 import '../../Home/view/widgets/bottomSheet.dart';
 import 'widgets/heartRate.dart';
+import 'widgets/respositeryRate.dart';
 import 'widgets/vitalWidgets.dart';
 
 class VitalsPage extends StatefulWidget {
@@ -62,7 +64,13 @@ class _VitalsPageState extends State<VitalsPage> {
             ),
             SizedBox(height: 20),
             VitalsCard(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RespiratoryRatePage()),
+                );
+              },
               title: 'Check Respiratory Rate',
               description:
                   'Monitoring respiratory rate helps track the efficiency of your breathing and can indicate changes in health status, particularly for conditions affecting the lungs or heart.',
@@ -70,7 +78,13 @@ class _VitalsPageState extends State<VitalsPage> {
             ),
             SizedBox(height: 10),
             VitalsCard(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => OxygenSaturationPage()),
+                );
+              },
               title: 'Oxygen Saturation',
               description:
                   'Regularly check your blood oxygen levels using a pulse oximeter to ensure your body is receiving enough oxygen.',
@@ -83,13 +97,17 @@ class _VitalsPageState extends State<VitalsPage> {
                     MaterialPageRoute(builder: (context) => HeartRatePage()));
               },
               child: VitalsCard(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HeartRatePage()));
+                },
                 title: 'Heart Rate',
                 description:
                     'Monitoring heart rate helps track cardiovascular health, fitness levels, and can indicate the presence of medical conditions.',
                 image: 'assets/rate.png',
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),

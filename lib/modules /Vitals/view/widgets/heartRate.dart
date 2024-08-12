@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:heart_bpm/heart_bpm.dart';
 import 'package:percentages_with_animation/percentages_with_animation.dart';
+import 'package:camera/camera.dart';
 
 class HeartRatePage extends StatefulWidget {
   @override
@@ -10,8 +11,30 @@ class HeartRatePage extends StatefulWidget {
 }
 
 class _HeartRatePageState extends State<HeartRatePage> {
-  List<SensorValue> _data = [];
+  final List<SensorValue> _data = [];
   int _bpmValue = 0;
+  CameraController? _cameraController;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeCamera();
+  }
+
+  @override
+  void dispose() {
+    _cameraController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> initializeCamera() async {
+    final cameras = await availableCameras();
+    final camera = cameras.first;
+    _cameraController = CameraController(camera, ResolutionPreset.high);
+
+    await _cameraController?.initialize();
+    _cameraController?.setFlashMode(FlashMode.torch);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,44 +45,15 @@ class _HeartRatePageState extends State<HeartRatePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Camera view takes all the space of the Expanded flex 3
           Expanded(
             flex: 3,
             child: Container(
               width: double.infinity,
               height: double.infinity,
-              child: HeartBPMDialog(
-                context: context,
-                onRawData: (value) {
-                  setState(() {
-                    _data.add(value);
-                  });
-                },
-                onBPM: (value) {
-                  setState(() {
-                    _bpmValue = value;
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Heart Rate Result'),
-                        content: Text('Your heart rate is $_bpmValue BPM'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                _data.clear();
-                                _bpmValue = 0;
-                              });
-                            },
-                            child: Text('Okay'),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-                },
-              ),
+              child: _cameraController != null &&
+                      _cameraController!.value.isInitialized
+                  ? CameraPreview(_cameraController!)
+                  : Center(child: CircularProgressIndicator()),
             ),
           ),
           Expanded(
@@ -72,12 +66,12 @@ class _HeartRatePageState extends State<HeartRatePage> {
                     child: Row(
                       children: [
                         Text(
-                            'Place your fingertip over the rear-facing camera lens'),
+                          'Place your fingertip over the rear-facing\ncamera lens',
+                        ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20),
-                  // Parse the _bpmValue to the currentPercentage with a max value of 100
                   Container(
                     height: 90,
                     width: 100,
@@ -92,6 +86,7 @@ class _HeartRatePageState extends State<HeartRatePage> {
                       backgroundStrokeWidth: 2,
                     ),
                   ),
+                  if (_bpmValue >= 100) showHeartRateDetails(),
                 ],
               ),
             ),
@@ -100,8 +95,62 @@ class _HeartRatePageState extends State<HeartRatePage> {
       ),
     );
   }
+
+  showHeartRateDetails() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Heart Rate Details',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Your heart rate is $_bpmValue BPM',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _data.clear();
+                  _bpmValue = 0;
+                });
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
+
+ // showDialog(
+                    //   context: context,
+                    //   builder: (context) => AlertDialog(
+                    //     title: Text('Heart Rate Result'),
+                    //     content: Text('Your heart rate is $_bpmValue BPM'),
+                    //     actions: [
+                    //       TextButton(
+                    //         onPressed: () {
+                    //           Navigator.of(context).pop();
+                    //           setState(() {
+                    //             _data.clear();
+                    //             _bpmValue = 0;
+                    //           });
+                    //         },
+                    //         child: Text('Okay'),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // );
  
   // ElevatedButton(
           //   onPressed: () {
