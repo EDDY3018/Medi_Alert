@@ -44,6 +44,11 @@ dependencies:
   camera: ^0.10.5+5
   table_calendar: ^3.1.2
   syncfusion_flutter_calendar: ^26.2.5
+  wakelock_plus: ^1.2.7
+  flutter_svg: ^2.0.10+1
+  fl_chart: ^0.68.0
+  torch_controller: ^2.0.1
+  share: ^2.0.4
 
 dev_dependencies:
   flutter_test:
