@@ -31,9 +31,9 @@ class BottomSheetContent extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.local_hospital),
-            title: Text('Call Ambulance\n 0551215140'),
+            title: Text('Call Ambulance\n 0249954276'),
             onTap: () async {
-              final phoneUrl = 'tel:0551215140';
+              final phoneUrl = 'tel:0249954276';
               if (await canLaunch(phoneUrl)) {
                 await launch(phoneUrl);
               } else {
