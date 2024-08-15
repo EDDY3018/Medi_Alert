@@ -63,18 +63,23 @@ class _VitalsPageState extends State<VitalsPage> {
               child: Text('Discover', style: TextStyle(fontSize: 20)),
             ),
             SizedBox(height: 20),
-            VitalsCard(
+            GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RespiratoryRatePage()),
-                );
+                customNavigator(context, RespiratoryRatePage());
               },
-              title: 'Check Respiratory Rate',
-              description:
-                  'Monitoring respiratory rate helps track the efficiency of your breathing and can indicate changes in health status, particularly for conditions affecting the lungs or heart.',
-              image: 'assets/heartRate.png',
+              child: VitalsCard(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RespiratoryRatePage()),
+                  );
+                },
+                title: 'Check Respiratory Rate',
+                description:
+                    'Monitoring respiratory rate helps track the efficiency of your breathing and can indicate changes in health status, particularly for conditions affecting the lungs or heart.',
+                image: 'assets/heartRate.png',
+              ),
             ),
             SizedBox(height: 10),
             VitalsCard(

@@ -2,9 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:medi_alert/Splash/splash.dart';
+import 'package:provider/provider.dart';
+
+import 'modules /Vitals/model/appointment.dart';
+
 
 void main() {
-  runApp(const MyApp());
+runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
