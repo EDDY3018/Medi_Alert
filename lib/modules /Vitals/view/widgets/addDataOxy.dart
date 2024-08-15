@@ -217,38 +217,25 @@ class _AddDataPageState extends State<AddDataPage> {
     );
   }
 
- void _saveData() {
-  if (_oxygenSaturationController.text.isEmpty ||
-      _supplementalOxygenController.text.isEmpty ||
-      _oxygenTherapy == 'Not set' ||
-      _readingMethod == 'Not set' ||
-      _measurementType == 'Not set') {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('All fields are required.'),
-        behavior: SnackBarBehavior.floating,
-      ),
+  void _saveData() {
+    final oxygenSaturation = _oxygenSaturationController.text;
+    final supplementalOxygen = _supplementalOxygenController.text;
+
+    final newAppointment = Appointment(
+      startTime: widget.date,
+      endTime: widget.date.add(Duration(minutes: 30)),
+      subject: 'Oxygen Saturation: $oxygenSaturation%, '
+          'Supplemental Oxygen: $supplementalOxygen L/min, '
+          'Therapy: $_oxygenTherapy, '
+          'Method: $_readingMethod, '
+          'Type: $_measurementType',
+      color: Colors.blue,
     );
-    return;
+
+    // Save to provider
+    context.read<AppointmentProvider>().addAppointment(newAppointment);
+
+    // Return the new appointment to the previous page
+    Navigator.pop(context, newAppointment);
   }
-
-  final oxygenSaturation = _oxygenSaturationController.text;
-  final supplementalOxygen = _supplementalOxygenController.text;
-
-  final newAppointment = Appointment(
-    startTime: widget.date,
-    endTime: widget.date.add(Duration(minutes: 30)),
-    subject: 'Oxygen Saturation: $oxygenSaturation%, '
-        'Supplemental Oxygen: $supplementalOxygen L/min, '
-        'Therapy: $_oxygenTherapy, '
-        'Method: $_readingMethod, '
-        'Type: $_measurementType',
-    color: Colors.blue,
-  );
-
-  context.read<AppointmentProvider>().addAppointment(newAppointment);
-
-  Navigator.pop(context);
-}
-
 }

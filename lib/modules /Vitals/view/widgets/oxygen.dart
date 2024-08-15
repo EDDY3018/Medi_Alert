@@ -61,36 +61,12 @@ class _OxygenSaturationPageState extends State<OxygenSaturationPage>
           ],
         ),
       ),
-      body: Column(
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          Expanded(
-            flex: 1,
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                buildCalendarView(CalendarView.day),
-                buildCalendarView(CalendarView.week),
-                buildCalendarView(CalendarView.month),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: ListView.builder(
-              itemCount: _appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = _appointments[index];
-                return Container(
-                  color: const Color.fromARGB(72, 156, 198, 158),
-                  margin: EdgeInsets.all(10),
-                  child: ListTile(
-                    title: Text('Today, ${TimeOfDay.now().format(context)}'),
-                    subtitle: Text(appointment.subject),
-                  ),
-                );
-              },
-            ),
-          ),
+          buildCalendarView(CalendarView.day),
+          buildCalendarView(CalendarView.week),
+          buildCalendarView(CalendarView.month),
         ],
       ),
     );

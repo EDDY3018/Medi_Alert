@@ -7,7 +7,7 @@ import 'package:medi_alert/modules%20/Vitals/view/vitals_page.dart';
 import 'package:medi_alert/utils/navigator.dart';
 import 'package:torch_controller/torch_controller.dart';
 import 'chart.dart';
-import 'history.dart';
+import 'BPMhistory.dart';
 import 'sensor.dart';
 
 class HeartRatePage extends StatefulWidget {

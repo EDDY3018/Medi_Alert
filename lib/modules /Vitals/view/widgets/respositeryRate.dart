@@ -1,12 +1,11 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'dart:async';
-import 'dart:math';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:intl/intl.dart';
+import 'RRhistory.dart';
 import 'circular.dart';
 
 class RespiratoryRatePage extends StatefulWidget {
@@ -19,9 +18,7 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
   Future<void>? _initializeControllerFuture;
   double _percent = 0.0;
   int _respiratoryRateValue = 0;
-  Timer? _detectionTimer;
-  List<double> _breathData = [];
-  final int _breathCountInterval = 10; // Interval for breath count
+  bool _isDetecting = false; // Track if detection is in progress
 
   @override
   void initState() {
@@ -37,104 +34,61 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
 
     _cameraController = CameraController(frontCamera, ResolutionPreset.medium);
     _initializeControllerFuture = _cameraController?.initialize();
-
-    // Start capturing frames
-    _startFrameCapture();
   }
 
-  void _startFrameCapture() {
-    _cameraController?.startImageStream((image) {
-      // Analyze image here
-      _analyzeFrame(image);
-    });
-  }
-
-  void _analyzeFrame(CameraImage image) {
-    // Implement your image analysis logic here
-    // For example, you might use a library to detect chest movement
-    // Here we simulate breath detection
-    double simulatedBreath = Random().nextDouble(); // Replace with actual analysis
-    setState(() {
-      _breathData.add(simulatedBreath);
-      if (_breathData.length > _breathCountInterval) {
-        _breathData.removeAt(0);
-      }
-      _calculateRespiratoryRate();
-    });
-  }
-
-  void _calculateRespiratoryRate() {
-    // Simple algorithm to estimate respiratory rate
-    // Count the number of breaths detected in the interval
-    int breathCount = _breathData.where((value) => value > 0.5).length;
-    setState(() {
-      _respiratoryRateValue = (breathCount / _breathCountInterval * 60).round();
-    });
+  @override
+  void dispose() {
+    _cameraController?.dispose();
+    super.dispose();
   }
 
   void _startDetection() {
+    if (_isDetecting) return; // Prevent starting if already detecting
+
     setState(() {
-      _percent = 0.0;
+      _isDetecting = true;
+      _percent = 0.0; // Reset percentage to 0% when starting detection
     });
-    Future.delayed(Duration(milliseconds: 50), () {
-      if (_percent < 1.0) {
-        setState(() {
-          _percent += 0.01; // Slower increment
-        });
-        _startDetection();
-      } else {
-        _percent = 1.0;
-        _measureRespiratoryRate();
-      }
+
+    _updatePercentage();
+  }
+
+  void _stopDetection() {
+    setState(() {
+      _isDetecting = false;
+      _percent = 0.0; // Reset percentage to 0% when stopping detection
     });
   }
 
+  void _updatePercentage() {
+    if (_percent < 1.0 && _isDetecting) {
+      Future.delayed(Duration(milliseconds: 1000), () {
+        setState(() {
+          _percent += 0.01; // Update percentage
+        });
+        _updatePercentage(); // Continue updating percentage
+      });
+    } else if (_percent >= 1.0) {
+      _percent = 1.0;
+      _measureRespiratoryRate();
+    }
+  }
+
+  // Simple logic to simulate respiratory rate measurement
   void _measureRespiratoryRate() {
-    // Ensure the detection timer is stopped
-    _detectionTimer?.cancel();
-    
+    // Simulate respiratory rate detection with random values
+    final random = Random();
     setState(() {
-      _respiratoryRateValue = 18; // Placeholder value, replace with actual rate
+      _respiratoryRateValue =
+          random.nextInt(20) + 12; // Simulated range: 12-32 breaths per minute
     });
 
     if (_respiratoryRateValue > 0) {
       _saveRespiratoryRateToHistory(_respiratoryRateValue);
-      _showRespiratoryRateDetails();
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => RespiratoryRateHistoryPage(),
+      ));
     }
-  }
-
-  void _showRespiratoryRateDetails() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Respiratory Rate Details',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Your respiratory rate is $_respiratoryRateValue breaths per minute',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _percent = 0.0;
-                  _respiratoryRateValue = 0;
-                });
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _saveRespiratoryRateToHistory(int rate) async {
@@ -142,16 +96,12 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
     List<String> history =
         prefs.getStringList('respiratory_rate_history') ?? [];
 
-    history
-        .add('Respiratory Rate: $rate breaths per minute - ${DateTime.now()}');
-    await prefs.setStringList('respiratory_rate_history', history);
-  }
+    // Format the time as 'hh:mm a'
+    String formattedTime = DateFormat('hh:mm a').format(DateTime.now());
 
-  @override
-  void dispose() {
-    _cameraController?.dispose();
-    _detectionTimer?.cancel();
-    super.dispose();
+    // Add the respiratory rate with the formatted time to the history list
+    history.add('Respiratory Rate: $rate breaths per minute - $formattedTime');
+    await prefs.setStringList('respiratory_rate_history', history);
   }
 
   @override
@@ -160,9 +110,23 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Check Respiratory Rate'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => RespiratoryRateHistoryPage(),
+                ));
+              },
+              child: Icon(Icons.history, color: Colors.black, size: 30),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
+          // Camera preview
           Positioned.fill(
             child: FutureBuilder<void>(
               future: _initializeControllerFuture,
@@ -170,11 +134,26 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return CameraPreview(_cameraController!);
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Tap on Start Detection to show Camera. ',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Icon(Icons.photo_camera_front)
+                      ],
+                    ),
+                  );
                 }
               },
             ),
           ),
+          // Overlay with text and circular indicator
           Positioned(
             top: 20,
             left: 20,
@@ -212,26 +191,44 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
               ),
             ),
           ),
+          // Start/Stop Detection button
           Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: GestureDetector(
-              onTap: _startDetection,
-              child: Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10), color: Colors.green),
-                child: Center(
-                    child: Text(
-                  'Start Detection',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-                )),
-              ),
-            ),
-          ),
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: GestureDetector(
+                  onTap: _isDetecting ? _stopDetection : _startDetection,
+                  child: Container(
+                    width: double.infinity,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: _isDetecting ? Colors.red : Colors.green),
+                    child: Center(
+                        child: Text(
+                      _isDetecting ? 'Stop Detecting' : 'Start Detection',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w700),
+                    )),
+                  )))
         ],
+      ),
+    );
+  }
+}
+
+class CustomCircularIndicator extends StatelessWidget {
+  final double percent;
+
+  CustomCircularIndicator({required this.percent});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      child: CustomPaint(
+        painter: CircularIndicatorPainter(percent: percent),
       ),
     );
   }
