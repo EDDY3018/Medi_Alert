@@ -29,6 +29,18 @@ class _ForgottenState extends State<Forgotten> {
           appBar: AppBar(
             backgroundColor: WHITE,
             centerTitle: true,
+            leading: GestureDetector(
+              onTap: () {
+                customNavigator(context, LoginPage());
+              },
+              child: Container(
+                decoration: BoxDecoration(color: WHITE, boxShadow: [
+                  BoxShadow(color: WHITE, spreadRadius: 0, blurRadius: 10)
+                ]),
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: Icon(Icons.arrow_back),
+              ),
+            ),
           ),
           body: GestureDetector(
             onTap: () {

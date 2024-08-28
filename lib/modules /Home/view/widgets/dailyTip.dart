@@ -17,6 +17,7 @@ class DailyTipCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Container(
+        margin: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
           border: Border(
             left: BorderSide(color: BLUE, width: 7),

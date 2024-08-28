@@ -6,6 +6,7 @@ import 'package:medi_alert/utils/navigator.dart';
 
 import '../../../utils/colors.dart';
 
+import '../../../utils/drawer.dart';
 import '../../Home/view/widgets/bottomSheet.dart';
 import 'widgets/heartRate.dart';
 import 'widgets/respositeryRate.dart';
@@ -22,6 +23,7 @@ class _VitalsPageState extends State<VitalsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: WHITE,
         elevation: 0,
@@ -45,14 +47,16 @@ class _VitalsPageState extends State<VitalsPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: Container(
-          width: 50,
-          height: 50,
-          child: Image.asset(
-            'assets/bgImage.png',
-            scale: 10,
+        actions: [
+          Container(
+            width: 50,
+            height: 50,
+            child: Image.asset(
+              'assets/bgImage.png',
+              scale: 10,
+            ),
           ),
-        ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

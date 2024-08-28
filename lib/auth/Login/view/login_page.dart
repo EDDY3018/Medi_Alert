@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:medi_alert/modules%20/BMI/view/bmi_page.dart';
+import 'package:medi_alert/modules%20/Exercise/view/exercise_page.dart';
 import 'package:medi_alert/utils/colors.dart';
 import 'package:medi_alert/utils/textStyles.dart';
 
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: GestureDetector(
                   onTap: () {
-                    customNavigator(context, BmiPage());
+                    customNavigator(context, ExercisePage());
                   },
                   child: Container(
                     width: w,

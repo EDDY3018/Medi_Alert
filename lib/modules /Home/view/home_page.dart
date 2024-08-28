@@ -1,10 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:medi_alert/modules%20/BMI/view/bmi_page.dart';
 import 'package:medi_alert/utils/colors.dart';
+import 'package:medi_alert/utils/navigator.dart';
+import 'package:provider/provider.dart';
 
+import '../../../utils/arrays.dart';
+import '../../../utils/drawer.dart';
 import '../../../utils/greetings.dart';
 import '../../../utils/textStyles.dart';
+import '../../BMI/models/bmiProvider.dart';
 import '../../Home/view/widgets/bottomSheet.dart';
 import '../../Home/view/widgets/dailyTip.dart';
 import '../../Home/view/widgets/ppData.dart';
@@ -18,25 +24,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        
+        actions: [
+          Container(
+            width: 50,
+            height: 50,
+            child: Image.asset(
+              'assets/bgImage.png',
+              scale: 10,
+            ),
+          ),
+        ],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              child: Image.asset(
-                'assets/bgImage.png',
-                scale: 10,
-              ),
-            ),
             SizedBox(width: 20),
             Container(
               child: Row(
@@ -52,6 +57,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
+      drawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,11 +77,20 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                PersonalDataCard(title: 'Height', data: '197.8'),
+                PersonalDataCard(
+                  title: 'Height',
+                  data: context.watch<BmiProvider>().height.toStringAsFixed(2),
+                ),
                 SizedBox(width: 10),
-                PersonalDataCard(title: 'Weight', data: '97.8'),
+                PersonalDataCard(
+                  title: 'Weight',
+                  data: context.watch<BmiProvider>().weight.toStringAsFixed(2),
+                ),
                 SizedBox(width: 10),
-                PersonalDataCard(title: 'BMI', data: '82.87'),
+                PersonalDataCard(
+                  title: 'BMI',
+                  data: context.watch<BmiProvider>().bmi.toStringAsFixed(2),
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -91,10 +106,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 20),
-            QuickActionCard(
-              title: 'Log New Data',
-              description:
-                  'Quickly enter your current details such as Height, Weight, and how often you Exercise.',
+            GestureDetector(
+              onTap: () {
+                customNavigator(context, BmiPage());
+              },
+              child: QuickActionCard(
+                onTap: () {
+                  customNavigator(context, BmiPage());
+                },
+                title: 'Log New Data',
+                description:
+                    'Quickly enter your current details such as Height, Weight, and how often you Exercise.',
+              ),
             ),
             SizedBox(height: 10),
             QuickActionCard(
@@ -115,31 +138,33 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 20),
-            DailyTipCard(
-              title: 'Stay Hydrated',
-              description:
-                  'Drinking enough water is crucial for maintaining overall health. Aim for at least 8 glasses a day to keep your body well-hydrated and functioning properly.',
-              image: 'assets/water.png',
+            Column(
+              children: dailyTips.map((tip) {
+                return DailyTipCard(
+                  title: tip['title']!,
+                  description: tip['description']!,
+                  image: tip['image']!,
+                );
+              }).toList(),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: WHITE,
-        elevation: 0,
-        child: Image.asset(
-          'assets/emegency.png',
-          color: GREEN,
-        ),
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return BottomSheetContent();
-            },
-          );
-        },
-      ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          child: Image.asset(
+            'assets/emegency.png',
+            color: Colors.green,
+          ),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return BottomSheetContent();
+              },
+            );
+          }),
     );
   }
 }

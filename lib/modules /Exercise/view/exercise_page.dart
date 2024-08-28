@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:medi_alert/modules%20/BMI/view/bmi_page.dart';
 import 'package:medi_alert/modules%20/Home/view/home_page.dart';
 import 'package:medi_alert/utils/btNav.dart';
 import 'package:medi_alert/utils/colors.dart';
@@ -98,7 +99,7 @@ class _ExercisePageState extends State<ExercisePage> {
                     onTap: _selectedOption == -1
                         ? null
                         : () {
-                            customNavigator(context, BTNAV());
+                            customNavigator(context, BmiPage());
                           },
                     child: Container(
                       width: w,

@@ -21,10 +21,11 @@ class _HeartRatePageState extends State<HeartRatePage> {
   bool _toggled = false;
   bool _isFinished = false;
   int? _score = 0;
+  int? _ewsScore = 0; // Early Warning Score
   CameraController? _controller;
-  TorchController _torchController = TorchController();
+  final TorchController _torchController = TorchController();
 
-  int _timeToStartCounter = 20; // Countdown timer extended to 20 seconds
+  int _timeToStartCounter = 60; // Countdown timer extended to 20 seconds
   final _chartKey = GlobalKey();
   final List<SensorValue> _data = <SensorValue>[]; // Array to store the values
   bool _isMeasuring = false;
@@ -87,44 +88,6 @@ class _HeartRatePageState extends State<HeartRatePage> {
     });
   }
 
-  void _startCollectingData() {
-    Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (!_toggled) {
-        timer.cancel();
-        return;
-      }
-
-      setState(() {
-        _score = (_score ?? 0) + 1; // Simulate BPM calculation
-        _data.add(SensorValue(DateTime.now(), _score!.toDouble()));
-      });
-
-      if (_timeToStartCounter == 0) {
-        _untoggle();
-        _promptUserToRemoveFinger();
-      }
-    });
-  }
-
-  void _promptUserToRemoveFinger() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Measurement Complete"),
-        content: const Text("Please remove your finger from the camera."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _saveAndNavigateToHistory();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
   List<BPMRecord> _bpmHistory = [];
 
   void _saveAndNavigateToHistory() {
@@ -142,7 +105,7 @@ class _HeartRatePageState extends State<HeartRatePage> {
   void _untoggle() {
     setState(() {
       _toggled = false;
-      _timeToStartCounter = 20; // Reset to 20 seconds
+      _timeToStartCounter = 60; // Reset to 20 seconds
       _isFinished = true;
       _isMeasuring = false;
     });
@@ -150,6 +113,74 @@ class _HeartRatePageState extends State<HeartRatePage> {
     _torchController.toggle(intensity: 0);
     _controller?.dispose();
     _controller = null;
+  }
+
+  void _startCollectingData() {
+    Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (!_toggled) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        _score = (_score ?? 0) + 1; // Simulate BPM calculation
+        _data.add(SensorValue(DateTime.now(), _score!.toDouble()));
+
+        // Calculate EWS
+        _ewsScore = _calculateEWS(_score!);
+      });
+
+      if (_timeToStartCounter == 0) {
+        _untoggle();
+        _promptUserToRemoveFinger();
+      }
+    });
+  }
+
+  int _calculateEWS(int bpm) {
+    if (bpm >= 131 || bpm <= 40) {
+      return 3;
+    } else if (bpm >= 111 && bpm <= 130 || bpm >= 41 && bpm <= 50) {
+      return 2;
+    } else if (bpm >= 91 && bpm <= 110) {
+      return 1;
+    } else if (bpm >= 51 && bpm <= 90) {
+      return 0;
+    }
+    return 0;
+  }
+
+  void _promptUserToRemoveFinger() {
+    String scoreNote = '';
+
+    if (_ewsScore == 0) {
+      scoreNote = "Your heart rate is within the normal range.";
+    } else if (_ewsScore == 1) {
+      scoreNote = "Your heart rate shows a mild deviation.";
+    } else if (_ewsScore == 2) {
+      scoreNote = "Your heart rate shows a moderate deviation.";
+    } else if (_ewsScore == 3) {
+      scoreNote = "Your heart rate shows a severe deviation.";
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Measurement Complete"),
+        content: Text(
+          "Please remove your finger from the camera.\n\nYour EWS Score: $_ewsScore\n\n$scoreNote",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _saveAndNavigateToHistory();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
