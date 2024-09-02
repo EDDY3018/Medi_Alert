@@ -34,7 +34,7 @@ class BTNAV extends StatelessWidget {
             'assets/vital.png',
             width: 24,
             height: 24,
-            color: BLACK,
+            color: WHITE,
           ),
           icon: Image.asset(
             'assets/vital.png',
@@ -44,23 +44,23 @@ class BTNAV extends StatelessWidget {
           ),
           title: "Vitals",
           textStyle: btBAV),
-      // PersistentBottomNavBarItem(
-      //     activeColorPrimary: GREEN,
-      //     inactiveColorPrimary: WHITE,
-      //     inactiveIcon: Image.asset(
-      //       'assets/setting.png',
-      //       width: 24,
-      //       height: 24,
-      //       color: WHITE,
-      //     ),
-      //     icon: Image.asset(
-      //       'assets/setting.png',
-      //       width: 24,
-      //       height: 24,
-      //       color: WHITE,
-      //     ),
-      //     title: "Settings",
-      //     textStyle: btBAV),
+      PersistentBottomNavBarItem(
+          activeColorPrimary: GREEN,
+          inactiveColorPrimary: WHITE,
+          inactiveIcon: Image.asset(
+            'assets/setting.png',
+            width: 24,
+            height: 24,
+            color: WHITE,
+          ),
+          icon: Image.asset(
+            'assets/setting.png',
+            width: 24,
+            height: 24,
+            color: WHITE,
+          ),
+          title: "Settings",
+          textStyle: btBAV),
     ];
 
     return PersistentTabView(
@@ -94,7 +94,7 @@ class BTNAV extends StatelessWidget {
   }
 
   List<Widget> _buildScreens() {
-    return [HomePage(), VitalsPage()];
+    return [HomePage(), VitalsPage(), SettingsPage()];
     //, SettingsPage()
   }
 }

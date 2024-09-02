@@ -1,6 +1,7 @@
 // ignore: file_names
 // ignore_for_file: library_private_types_in_public_api, use_super_parameters, avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_required_param, sized_box_for_whitespace, deprecated_member_use, file_names, duplicate_ignore, unused_local_variable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:medi_alert/auth/Login/view/login_page.dart';
@@ -8,6 +9,7 @@ import '../../../utils/colors.dart';
 import '../../../utils/navigator.dart';
 import '../../../utils/textStyles.dart';
 import '../../../utils/textfield.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Forgotten extends StatefulWidget {
   const Forgotten({Key? key}) : super(key: key);
@@ -17,7 +19,16 @@ class Forgotten extends StatefulWidget {
 }
 
 class _ForgottenState extends State<Forgotten> {
-  final TextEditingController _phoneController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  final TextEditingController emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.clear();
+  }
+
   void loginUser() {}
   @override
   Widget build(BuildContext context) {
@@ -98,18 +109,59 @@ class _ForgottenState extends State<Forgotten> {
                               ),
                             ],
                           ),
-                          CustomTextField(
-                            labelText: '',
-                            controller: _phoneController,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              margin: EdgeInsets.all(20),
+                              child: TextFormField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  hintText: "Email",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!RegExp(r'\S+@\S+\.\S+')
+                                      .hasMatch(value)) {
+                                    return 'Please enter a valid email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 10),
                           SizedBox(height: 20),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 20.0),
                             child: GestureDetector(
                               onTap: () {
-                                customNavigator(context, LoginPage());
+                                if (_formKey.currentState!.validate()) {
+                                  _auth
+                                      .sendPasswordResetEmail(
+                                          email: emailController.text.trim())
+                                      .then((value) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "We have sent you an email to recover your password. Please check it.",
+                                        toastLength: Toast.LENGTH_LONG,
+                                        gravity: ToastGravity.BOTTOM,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white);
+                                  }).catchError((error) {
+                                    Fluttertoast.showToast(
+                                        msg: error.toString(),
+                                        toastLength: Toast.LENGTH_LONG,
+                                        gravity: ToastGravity.BOTTOM,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white);
+                                  });
+                                  emailController.clear();
+                                }
                               },
                               child: Container(
                                 height: 40,

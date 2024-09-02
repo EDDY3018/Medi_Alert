@@ -1,10 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
   final TextEditingController controller;
 
-  CustomTextField({required this.labelText, required this.controller});
+  CustomTextField({
+    Key? key,
+    required this.labelText,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

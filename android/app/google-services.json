@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899549848662",
+    "project_id": "medialert-8fd2a",
+    "storage_bucket": "medialert-8fd2a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899549848662:android:e30c338ff19393ae6d07f7",
+        "android_client_info": {
+          "package_name": "com.example.medi_alert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGDBbWmF3OP_u_4v7ufnSnrsmK539Yhwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

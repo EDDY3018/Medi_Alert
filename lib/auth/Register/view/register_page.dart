@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:medi_alert/auth/Login/view/login_page.dart';
 import 'package:medi_alert/utils/navigator.dart';
-
+import '../../../utils/btNav.dart';
 import '../../../utils/colors.dart';
 import '../../../utils/textStyles.dart';
 import '../../../utils/textfield.dart';
@@ -23,6 +26,77 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   String? gender;
+  bool isLoading = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+// Inside _RegisterPageState class
+  final DatabaseReference _dbRef =
+      FirebaseDatabase.instance.reference(); // Reference to the database
+  void _register() async {
+    if (nameController.text.isEmpty ||
+        studentIdController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        gender == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("All fields are required")),
+      );
+      return;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // Save user data to Firebase Realtime Database
+      await _dbRef.child('users/${userCredential.user?.uid}').set({
+        'fullName': nameController.text,
+        'studentID': studentIdController.text,
+        'email': emailController.text,
+        'gender': gender,
+      });
+
+      // Navigate to the next screen
+      customNavigator(context, LoginPage());
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Registration failed")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _checkUserLoggedIn() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      customNavigator(context, BTNAV());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserLoggedIn();
+  }
+
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
@@ -207,19 +281,22 @@ class _RegisterPageState extends State<RegisterPage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: GestureDetector(
-                  onTap: () {
-                    customNavigator(context, LoginPage());
-                  },
+                  onTap: _register,
                   child: Container(
                     width: w,
                     height: 40,
                     decoration: BoxDecoration(
                         color: GREEN, borderRadius: BorderRadius.circular(8)),
                     child: Center(
-                      child: Text(
-                        'Next',
-                        style: CONTAINERTEXT,
-                      ),
+                      child: isLoading
+                          ? LoadingIndicator(
+                              indicatorType: Indicator.ballPulse,
+                              colors: [Colors.white],
+                            )
+                          : Text(
+                              'Next',
+                              style: CONTAINERTEXT,
+                            ),
                     ),
                   ),
                 ),

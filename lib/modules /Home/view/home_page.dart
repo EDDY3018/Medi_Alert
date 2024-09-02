@@ -15,6 +15,7 @@ import '../../Home/view/widgets/bottomSheet.dart';
 import '../../Home/view/widgets/dailyTip.dart';
 import '../../Home/view/widgets/ppData.dart';
 import '../../Home/view/widgets/quickAction.dart';
+import 'widgets/booking.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -124,6 +125,9 @@ class _HomePageState extends State<HomePage> {
               title: 'Set Alert Reminders',
               description:
                   'Set up and receive timely alerts to take your medications as prescribed, helping you stay on track with your treatment plan and maintain your health.',
+              onTap: () {
+                customNavigator(context, BookingPage());
+              },
             ),
             SizedBox(height: 20),
             Padding(
