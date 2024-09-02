@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 10),
             QuickActionCard(
-              title: 'Set Alert Reminders',
+              title: 'Book Appintment and Set Alert Reminders',
               description:
                   'Set up and receive timely alerts to take your medications as prescribed, helping you stay on track with your treatment plan and maintain your health.',
               onTap: () {

@@ -154,20 +154,28 @@ class _BookingPageState extends State<BookingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<String>(
-              value: _selectedDoctor,
-              hint: Text('Select Doctor'),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedDoctor = newValue;
-                });
-              },
-              items: _doctors.map((doctor) {
-                return DropdownMenuItem<String>(
-                  value: doctor['name'],
-                  child: Text('${doctor['name']} (${doctor['staffID']})'),
-                );
-              }).toList(),
+            Container(
+              width: 320,
+              height: 40,
+              decoration: BoxDecoration(color: GREY),
+              child: DropdownButtonFormField<String>(
+                isExpanded: true,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                isDense: true,
+                value: _selectedDoctor,
+                hint: Text('Select Doctor'),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedDoctor = newValue;
+                  });
+                },
+                items: _doctors.map((doctor) {
+                  return DropdownMenuItem<String>(
+                    value: doctor['name'],
+                    child: Text('${doctor['name']} (${doctor['staffID']})'),
+                  );
+                }).toList(),
+              ),
             ),
             SizedBox(height: 20),
             Row(
@@ -223,14 +231,25 @@ class _BookingPageState extends State<BookingPage> {
               maxLines: 3,
             ),
             Spacer(),
-            ElevatedButton(
-              onPressed: _submitBooking,
-              child: Text('Submit'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                backgroundColor: Colors.green,
-              ),
-            ),
+            GestureDetector(
+              onTap: _submitBooking,
+              child: Container(
+                  height: 40,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: GREEN,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(
+                        color: WHITE,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  )),
+            )
           ],
         ),
       ),
