@@ -32,62 +32,67 @@ class _RegisterPageState extends State<RegisterPage> {
 // Inside _RegisterPageState class
   final DatabaseReference _dbRef =
       FirebaseDatabase.instance.reference(); // Reference to the database
-  void _register() async {
-    if (nameController.text.isEmpty ||
-        studentIdController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty ||
-        gender == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("All fields are required")),
-      );
-      return;
-    }
+ void _register() async {
+  if (nameController.text.isEmpty ||
+      studentIdController.text.isEmpty ||
+      emailController.text.isEmpty ||
+      passwordController.text.isEmpty ||
+      confirmPasswordController.text.isEmpty ||
+      gender == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("All fields are required")),
+    );
+    return;
+  }
 
-    if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Passwords do not match")),
-      );
-      return;
-    }
+  if (passwordController.text != confirmPasswordController.text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Passwords do not match")),
+    );
+    return;
+  }
 
-    setState(() {
-      isLoading = true;
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    UserCredential userCredential =
+        await _auth.createUserWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    // Save user data to Firebase Realtime Database
+    await _dbRef.child('users/${userCredential.user?.uid}').set({
+      'fullName': nameController.text,
+      'studentID': studentIdController.text,
+      'email': emailController.text,
+      'gender': gender,
     });
 
-    try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      // Save user data to Firebase Realtime Database
-      await _dbRef.child('users/${userCredential.user?.uid}').set({
-        'fullName': nameController.text,
-        'studentID': studentIdController.text,
-        'email': emailController.text,
-        'gender': gender,
-      });
-
-      // Navigate to the next screen
-      customNavigator(context, LoginPage());
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Registration failed")),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+    // Await the navigation to the login page
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  } on FirebaseAuthException catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.message ?? "Registration failed")),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
 
   void _checkUserLoggedIn() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      customNavigator(context, BTNAV());
+      customNavigator(
+          context,
+          BTNAV(
+            pageIndex: 0,
+          ));
     }
   }
 
@@ -114,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 100),
+              SizedBox(height: 50),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
@@ -299,6 +304,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                     ),
                   ),
+                ),
+              ),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  customNavigator(context, LoginPage());
+                },
+                child: Text(
+                  'Already have an account? \t\t Login',
+                  style: forgot,
                 ),
               ),
               SizedBox(height: 40),

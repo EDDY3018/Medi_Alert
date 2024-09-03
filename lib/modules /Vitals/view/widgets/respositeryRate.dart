@@ -3,6 +3,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:medi_alert/modules%20/Vitals/view/vitals_page.dart';
+import 'package:medi_alert/utils/navigator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'RRhistory.dart';
@@ -110,6 +112,11 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Check Respiratory Rate'),
+        leading: GestureDetector(
+            onTap: () {
+              customNavigator(context, VitalsPage());
+            },
+            child: Icon(Icons.arrow_back, color: Colors.black, size: 30)),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),

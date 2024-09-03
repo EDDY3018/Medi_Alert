@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:medi_alert/auth/Login/view/login_page.dart';
 import 'package:medi_alert/auth/Register/view/register_page.dart';
 import 'package:medi_alert/utils/colors.dart';
 import 'package:medi_alert/utils/navigator.dart';
@@ -66,7 +67,7 @@ class _SplashState extends State<Splash> {
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: GestureDetector(
                   onTap: () {
-                    customNavigator(context, RegisterPage());
+                    customNavigator(context, LoginPage());
                   },
                   child: Column(
                     children: [

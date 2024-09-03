@@ -72,13 +72,14 @@ class _VitalsPageState extends State<VitalsPage> {
                 customNavigator(context, RespiratoryRatePage());
               },
               child: VitalsCard(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RespiratoryRatePage()),
-                  );
-                },
+                onTap: () {},
+                // onTap: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => RespiratoryRatePage()),
+                //   );
+                // },
                 title: 'Check Respiratory Rate',
                 description:
                     'Monitoring respiratory rate helps track the efficiency of your breathing and can indicate changes in health status, particularly for conditions affecting the lungs or heart.',

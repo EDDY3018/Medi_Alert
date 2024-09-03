@@ -271,7 +271,7 @@ class _BmiPageState extends State<BmiPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: GestureDetector(
                     onTap: () {
-                      _isNextEnabled ? customNavigator(context, BTNAV()) : null;
+                      _isNextEnabled ? customNavigator(context, BTNAV(pageIndex: 0,)) : null;
                     },
                     child: Container(
                       width: w,

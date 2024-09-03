@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:medi_alert/auth/Login/view/login_page.dart';
+import 'package:medi_alert/utils/colors.dart';
 import 'package:share/share.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -75,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.of(context)
+    await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
@@ -155,39 +156,59 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildSubmitButton() {
     return Align(
-      alignment: Alignment.centerRight,
-      child: ElevatedButton(
-        onPressed: _submitFeedback,
-        child: Text('Submit'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-        ),
-      ),
-    );
+        alignment: Alignment.centerRight,
+        child: GestureDetector(
+          onTap: _submitFeedback,
+          child: Container(
+              width: 120,
+              height: 40,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5), color: GREEN),
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(
+                  "Submit",
+                  style: TextStyle(color: WHITE, fontWeight: FontWeight.w700),
+                ),
+              ])),
+        ));
   }
 
   Widget _buildShareAppButton() {
-    return ElevatedButton.icon(
-      onPressed: _shareApp,
-      icon: Icon(Icons.share),
-      label: Text('Share App'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-      ),
+    return GestureDetector(
+      onTap: _shareApp,
+      child: Container(
+          width: 120,
+          height: 40,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5), color: GREEN),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            Icon(Icons.logout),
+            Text(
+              "Share App",
+              style: TextStyle(color: WHITE, fontWeight: FontWeight.w700),
+            ),
+          ])),
     );
   }
 
   Widget _buildLogoutButton() {
-    return ElevatedButton.icon(
-      onPressed: _logout,
-      icon: Icon(Icons.exit_to_app),
-      label: Text('Logout'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-      ),
+    return GestureDetector(
+      onTap: _logout,
+      child: Container(
+          width: 120,
+          height: 40,
+          decoration:
+              BoxDecoration(borderRadius: BorderRadius.circular(5), color: RED),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            Icon(Icons.logout),
+            Text(
+              "Logout",
+              style: TextStyle(color: WHITE, fontWeight: FontWeight.w700),
+            ),
+          ])),
     );
   }
 }

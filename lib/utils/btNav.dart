@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, no_leading_underscores_for_local_identifiers, prefer_const_constructors
+// ignore_for_file: use_key_in_widget_constructors, no_leading_underscores_for_local_identifiers, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:medi_alert/modules%20/Settings/view/settings_page.dart';
 import 'package:medi_alert/modules%20/Vitals/view/vitals_page.dart';
@@ -10,91 +10,82 @@ import '../modules /home/view/home_page.dart';
 import 'colors.dart';
 import 'textStyles.dart';
 
-class BTNAV extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    List<PersistentBottomNavBarItem> _navBarItems = [
-      PersistentBottomNavBarItem(
-          activeColorPrimary: GREEN,
-          inactiveColorPrimary: WHITE,
-          inactiveIcon: Icon(
-            Icons.dashboard_outlined,
-            color: BLACK,
-          ),
-          icon: Icon(
-            Icons.dashboard_outlined,
-            color: WHITE,
-          ),
-          title: "Home",
-          textStyle: btBAV),
-      PersistentBottomNavBarItem(
-          activeColorPrimary: GREEN,
-          inactiveColorPrimary: WHITE,
-          inactiveIcon: Image.asset(
-            'assets/vital.png',
-            width: 24,
-            height: 24,
-            color: WHITE,
-          ),
-          icon: Image.asset(
-            'assets/vital.png',
-            width: 24,
-            height: 24,
-            color: WHITE,
-          ),
-          title: "Vitals",
-          textStyle: btBAV),
-      PersistentBottomNavBarItem(
-          activeColorPrimary: GREEN,
-          inactiveColorPrimary: WHITE,
-          inactiveIcon: Image.asset(
-            'assets/setting.png',
-            width: 24,
-            height: 24,
-            color: WHITE,
-          ),
-          icon: Image.asset(
-            'assets/setting.png',
-            width: 24,
-            height: 24,
-            color: WHITE,
-          ),
-          title: "Settings",
-          textStyle: btBAV),
-    ];
+class BTNAV extends StatefulWidget {
+  const BTNAV({Key? key, required this.pageIndex}) : super(key: key);
+  final int pageIndex;
 
-    return PersistentTabView(
-      context,
-      controller: PersistentTabController(initialIndex: 0),
-      screens: _buildScreens(),
-      items: _navBarItems,
-      confineInSafeArea: true,
-      backgroundColor: Color.fromARGB(255, 239, 236, 236),
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: true,
-      stateManagement: true,
-      hideNavigationBar: false,
-      hideNavigationBarWhenKeyboardShows: true,
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      popAllScreensOnTapOfSelectedTab: false,
-      itemAnimationProperties: const ItemAnimationProperties(
-        duration: Duration(milliseconds: 50),
-        curve: Curves.bounceInOut,
-      ),
-      screenTransitionAnimation: const ScreenTransitionAnimation(
-        animateTabTransition: true,
-        curve: Curves.bounceInOut,
-        duration: Duration(milliseconds: 200),
-      ),
-      navBarHeight: 70,
-      navBarStyle: NavBarStyle.style4,
-    );
+  @override
+  State<BTNAV> createState() => _BTNAVState();
+}
+
+class _BTNAVState extends State<BTNAV> {
+  final pages = [HomePage(), VitalsPage(), SettingsPage()];
+
+  late int _pageIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageIndex = widget.pageIndex;
   }
 
-  List<Widget> _buildScreens() {
-    return [HomePage(), VitalsPage(), SettingsPage()];
-    //, SettingsPage()
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[_pageIndex],
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+            indicatorColor: WHITE,
+            labelTextStyle: MaterialStatePropertyAll(TextStyle(
+                fontSize: 10,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.bold,
+                color: WHITE)),
+            indicatorShape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)))),
+        child: NavigationBar(
+            height: 63,
+            backgroundColor: BLUE,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            animationDuration: Duration(seconds: 1),
+            selectedIndex: _pageIndex,
+            onDestinationSelected: (pageIndex) =>
+                setState(() => _pageIndex = pageIndex),
+            destinations: [
+              NavigationDestination(
+                icon: Icon(
+                  Icons.tips_and_updates,
+                  color: BLACK,
+                ),
+                selectedIcon: Icon(
+                  Icons.tips_and_updates,
+                  color: BLACK,
+                ),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  Icons.monitor_heart_sharp,
+                  color: BLACK,
+                ),
+                selectedIcon: Icon(
+                  Icons.chat,
+                  color: Colors.black,
+                ),
+                label: 'Vitals',
+              ),
+              NavigationDestination(
+                  icon: Icon(
+                    Icons.settings,
+                    color: BLACK,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.settings,
+                    color: BLACK,
+                  ),
+                  label: 'Settings'),
+            ]),
+      ),
+    );
   }
 }
