@@ -1,13 +1,27 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_alert/auth/Login/view/login_page.dart';
 import 'package:medi_alert/auth/Profile/views/profile.dart';
 import 'package:medi_alert/utils/colors.dart';
+import 'package:share/share.dart';
 
 import '../modules /Vitals/view/widgets/BPMhistory.dart';
 
 class AppDrawer extends StatelessWidget {
+  void _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  void _shareApp() {
+    Share.share(
+      'Check out this app! https://example.com/app',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -51,7 +65,6 @@ class AppDrawer extends StatelessWidget {
             text: 'Settings',
             icon: Icons.settings,
             onTap: () {
-
               Navigator.pop(context);
             },
           ),
@@ -60,8 +73,8 @@ class AppDrawer extends StatelessWidget {
             text: 'Share App',
             icon: Icons.ios_share,
             onTap: () {
-
               Navigator.pop(context);
+              _shareApp();
             },
           ),
           Spacer(),
@@ -69,10 +82,9 @@ class AppDrawer extends StatelessWidget {
             text: 'Logout',
             icon: Icons.logout,
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
               // Handle logout
+              Navigator.pop(context);
+              _logout(context);
             },
           ),
           SizedBox(height: 20)

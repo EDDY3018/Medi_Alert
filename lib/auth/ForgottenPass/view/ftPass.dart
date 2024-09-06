@@ -19,7 +19,7 @@ class Forgotten extends StatefulWidget {
 }
 
 class _ForgottenState extends State<Forgotten> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
 
@@ -29,41 +29,43 @@ class _ForgottenState extends State<Forgotten> {
     emailController.clear();
   }
 
-  void loginUser() {}
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.sizeOf(context).height;
     double w = MediaQuery.sizeOf(context).width;
     return WillPopScope(
-        child: Scaffold(
+      child: Scaffold(
+        backgroundColor: WHITE,
+        appBar: AppBar(
           backgroundColor: WHITE,
-          appBar: AppBar(
-            backgroundColor: WHITE,
-            centerTitle: true,
-            leading: GestureDetector(
-              onTap: () {
-                customNavigator(context, LoginPage());
-              },
-              child: Container(
-                decoration: BoxDecoration(color: WHITE, boxShadow: [
-                  BoxShadow(color: WHITE, spreadRadius: 0, blurRadius: 10)
-                ]),
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: Icon(Icons.arrow_back),
-              ),
-            ),
-          ),
-          body: GestureDetector(
+          centerTitle: true,
+          leading: GestureDetector(
             onTap: () {
-              FocusScope.of(context).unfocus();
+              customNavigator(context, LoginPage());
             },
             child: Container(
-              height: h,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      alignment: Alignment.center,
-                      image: AssetImage('assets/bgImage.png'))),
-              child: SingleChildScrollView(
+              decoration: BoxDecoration(color: WHITE, boxShadow: [
+                BoxShadow(color: WHITE, spreadRadius: 0, blurRadius: 10)
+              ]),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+        ),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Container(
+            height: h,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    opacity: 0.04,
+                    alignment: Alignment.center,
+                    image: AssetImage('assets/bgImage.png'))),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -90,7 +92,7 @@ class _ForgottenState extends State<Forgotten> {
                               Container(
                                   margin: EdgeInsets.symmetric(horizontal: 20),
                                   child: Text(
-                                    "Lets help you regain access to your account",
+                                    "Let's help you regain access to your account",
                                     style: hint,
                                   )),
                             ],
@@ -153,8 +155,9 @@ class _ForgottenState extends State<Forgotten> {
                                         backgroundColor: Colors.green,
                                         textColor: Colors.white);
                                   }).catchError((error) {
+                                    debugPrint(error.toString());
                                     Fluttertoast.showToast(
-                                        msg: error.toString(),
+                                        msg: 'Invalid EMAIL',
                                         toastLength: Toast.LENGTH_LONG,
                                         gravity: ToastGravity.BOTTOM,
                                         backgroundColor: Colors.red,
@@ -187,10 +190,11 @@ class _ForgottenState extends State<Forgotten> {
             ),
           ),
         ),
-        onWillPop: () async {
-          // Navigate back to the previous page
-          customNavigator(context, LoginPage());
-          return false;
-        });
+      ),
+      onWillPop: () async {
+        customNavigator(context, LoginPage());
+        return false;
+      },
+    );
   }
 }

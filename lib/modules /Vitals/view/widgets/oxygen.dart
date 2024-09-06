@@ -5,6 +5,7 @@ import 'package:medi_alert/modules%20/Vitals/view/widgets/addDataOxy.dart';
 import 'package:medi_alert/utils/navigator.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../../../utils/btNav.dart';
 import '../vitals_page.dart';
 
 class OxygenSaturationPage extends StatefulWidget {
@@ -26,48 +27,63 @@ class _OxygenSaturationPageState extends State<OxygenSaturationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Oxygen Saturation'),
-        leading: IconButton(
-          onPressed: () {
-            customNavigator(context, VitalsPage());
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              var result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AddDataPage(date: _selectedDate)),
-              );
-              if (result != null) {
-                setState(() {
-                  _appointments.add(result);
-                });
-              }
+    return WillPopScope(
+      onWillPop: () async {
+        customNavigator(
+            context,
+            BTNAV(
+              pageIndex: 1,
+            ));
+
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Oxygen Saturation'),
+          leading: IconButton(
+            onPressed: () {
+              customNavigator(
+                  context,
+                  BTNAV(
+                    pageIndex: 1,
+                  ));
             },
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.arrow_back),
           ),
-        ],
-        bottom: TabBar(
+          actions: [
+            IconButton(
+              onPressed: () async {
+                var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddDataPage(date: _selectedDate)),
+                );
+                if (result != null) {
+                  setState(() {
+                    _appointments.add(result);
+                  });
+                }
+              },
+              icon: Icon(Icons.add),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: 'Day'),
+              Tab(text: 'Week'),
+              Tab(text: 'Month'),
+            ],
+          ),
+        ),
+        body: TabBarView(
           controller: _tabController,
-          tabs: [
-            Tab(text: 'Day'),
-            Tab(text: 'Week'),
-            Tab(text: 'Month'),
+          children: [
+            buildCalendarView(CalendarView.day),
+            buildCalendarView(CalendarView.week),
+            buildCalendarView(CalendarView.month),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          buildCalendarView(CalendarView.day),
-          buildCalendarView(CalendarView.week),
-          buildCalendarView(CalendarView.month),
-        ],
       ),
     );
   }

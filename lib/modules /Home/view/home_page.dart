@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_alert/modules%20/BMI/view/bmi_page.dart';
 import 'package:medi_alert/utils/colors.dart';
@@ -25,6 +27,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String firstName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  void _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.reference().child('users/${user.uid}');
+      DataSnapshot snapshot = await userRef.get();
+
+      if (snapshot.exists) {
+        setState(() {
+          String fullName = snapshot.child('fullName').value as String;
+          firstName = fullName.split(' ')[0]; // Get the first name
+        });
+      }
+    }
+  }
+
+  String _truncateName(String name) {
+    if (name.length > 8) {
+      return '${name.substring(0, 8)}...';
+    }
+    return name;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +82,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(getGreeting(), style: TextStyle(color: Colors.black)),
                   SizedBox(width: 5),
-                  Text('Padison', style: TextStyle(color: Colors.black)),
+                  Text(_truncateName(firstName),
+                      style: TextStyle(color: Colors.black)),
                 ],
               ),
             )
@@ -155,7 +189,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(0, 255, 255, 255),
           elevation: 0,
           child: Image.asset(
             'assets/emegency.png',

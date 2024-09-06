@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, use_build_context_synchronously
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:medi_alert/auth/Login/view/login_page.dart';
+import 'package:medi_alert/modules%20/Exercise/view/exercise_page.dart';
 import 'package:medi_alert/utils/navigator.dart';
 import '../../../utils/btNav.dart';
 import '../../../utils/colors.dart';
@@ -32,58 +33,62 @@ class _RegisterPageState extends State<RegisterPage> {
 // Inside _RegisterPageState class
   final DatabaseReference _dbRef =
       FirebaseDatabase.instance.reference(); // Reference to the database
- void _register() async {
-  if (nameController.text.isEmpty ||
-      studentIdController.text.isEmpty ||
-      emailController.text.isEmpty ||
-      passwordController.text.isEmpty ||
-      confirmPasswordController.text.isEmpty ||
-      gender == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("All fields are required")),
-    );
-    return;
-  }
+  void _register() async {
+    if (nameController.text.isEmpty ||
+        studentIdController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        gender == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("All fields are required")),
+      );
+      return;
+    }
 
-  if (passwordController.text != confirmPasswordController.text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Passwords do not match")),
-    );
-    return;
-  }
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
 
-  setState(() {
-    isLoading = true;
-  });
-
-  try {
-    UserCredential userCredential =
-        await _auth.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
-
-    // Save user data to Firebase Realtime Database
-    await _dbRef.child('users/${userCredential.user?.uid}').set({
-      'fullName': nameController.text,
-      'studentID': studentIdController.text,
-      'email': emailController.text,
-      'gender': gender,
-    });
-
-    // Await the navigation to the login page
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  } on FirebaseAuthException catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.message ?? "Registration failed")),
-    );
-  } finally {
     setState(() {
-      isLoading = false;
+      isLoading = true;
     });
+
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // Save user data to Firebase Realtime Database
+      await _dbRef.child('users/${userCredential.user?.uid}').set({
+        'fullName': nameController.text,
+        'studentID': studentIdController.text,
+        'email': emailController.text,
+        'gender': gender,
+      });
+
+      // Await the navigation to the login page
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => ExercisePage()),
+          (route) => false,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Registration failed")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-}
 
   void _checkUserLoggedIn() async {
     User? user = _auth.currentUser;
@@ -99,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    _checkUserLoggedIn();
+    // _checkUserLoggedIn();
   }
 
   @override

@@ -1,6 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:medi_alert/modules%20/Vitals/view/widgets/respositeryRate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../utils/navigator.dart';
+import '../vitals_page.dart';
 
 class RespiratoryRateHistoryPage extends StatefulWidget {
   @override
@@ -34,59 +40,72 @@ class _RespiratoryRateHistoryPageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Respiratory Rate History'),
-      ),
-      body: FutureBuilder<List<String>>(
-        future: _getRespiratoryRateHistory(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No history available.'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () async {
-                      final confirmDelete = await showDialog<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Confirm Deletion'),
-                            content: Text(
-                                'Are you sure you want to delete this entry?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(false),
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(true),
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+    return WillPopScope(
+       onWillPop: () async {
+        customNavigator(context, RespiratoryRatePage());
 
-                      if (confirmDelete == true) {
-                        await _deleteHistoryItem(index);
-                      }
-                    },
-                  ),
-                );
-              },
-            );
-          }
-        },
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Respiratory Rate History'),
+           leading: IconButton(
+            onPressed: () {
+              customNavigator(context, RespiratoryRatePage());
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
+        body: FutureBuilder<List<String>>(
+          future: _getRespiratoryRateHistory(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No history available.'));
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(snapshot.data![index]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () async {
+                        final confirmDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Confirm Deletion'),
+                              content: Text(
+                                  'Are you sure you want to delete this entry?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+      
+                        if (confirmDelete == true) {
+                          await _deleteHistoryItem(index);
+                        }
+                      },
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }

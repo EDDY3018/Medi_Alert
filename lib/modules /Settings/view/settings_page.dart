@@ -7,6 +7,9 @@ import 'package:medi_alert/auth/Login/view/login_page.dart';
 import 'package:medi_alert/utils/colors.dart';
 import 'package:share/share.dart';
 
+import '../../../utils/btNav.dart';
+import '../../../utils/navigator.dart';
+
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -16,7 +19,8 @@ class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _feedbackController = TextEditingController();
   String fullName = 'Full Name';
   String studentID = 'Student ID';
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.reference();
   @override
   void initState() {
     super.initState();
@@ -24,26 +28,16 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user = _auth.currentUser;
     if (user != null) {
-      DatabaseReference userRef =
-          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      DatabaseReference userRef = _dbRef.child('users/${user.uid}');
+      DataSnapshot snapshot = await userRef.get();
 
-      try {
-        DatabaseEvent event = await userRef.once();
-        if (event.snapshot.exists) {
-          final data = event.snapshot.value as Map<String, dynamic>;
-          setState(() {
-            fullName = data['fullName'] ?? 'Full Name';
-            studentID = data['studentID'] ?? 'Student ID';
-          });
-        } else {
-          // Handle case when data doesn't exist
-          print('No data available');
-        }
-      } catch (e) {
-        // Handle any errors that might occur
-        print('Failed to fetch user data: $e');
+      if (snapshot.exists) {
+        setState(() {
+          fullName = snapshot.child('fullName').value as String;
+          studentID = snapshot.child('studentID').value as String;
+        });
       }
     }
   }
@@ -64,28 +58,40 @@ class _SettingsPageState extends State<SettingsPage> {
         _feedbackController.clear();
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit feedback: $error')),
+          SnackBar(
+            content: Text('Write something to submit feedback'),
+            backgroundColor: RED,
+          ),
         );
       });
     }
   }
 
   void _shareApp() {
-    Share.share('Check out this app! https://example.com/app');
+    Share.share('Check out this app! https://example.com/app', );
   }
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    await Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => LoginPage()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: WHITE,
       appBar: AppBar(
+        elevation: 1,
+        backgroundColor: WHITE,
         title: Text('Settings'),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            customNavigator(context, BTNAV(pageIndex: 0));
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,14 +99,14 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Profile',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             _buildTextField(label: fullName),
             SizedBox(height: 10),
             _buildTextField(label: studentID),
             SizedBox(height: 20),
             Text('Feedback',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             _buildFeedbackField(),
             SizedBox(height: 20),
@@ -121,11 +127,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildTextField({required String label}) {
     return Container(
+      height: 50,
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
+          color: WHITE,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 2,
+                spreadRadius: 2,
+                color: GREY,
+                offset: Offset.zero)
+          ]),
       child: TextField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -138,11 +151,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildFeedbackField() {
     return Container(
+      height: 150,
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
+          color: WHITE,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 2,
+                spreadRadius: 2,
+                color: GREY,
+                offset: Offset.zero)
+          ]),
       child: TextField(
         controller: _feedbackController,
         maxLines: null,
@@ -184,7 +204,7 @@ class _SettingsPageState extends State<SettingsPage> {
               borderRadius: BorderRadius.circular(5), color: GREEN),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            Icon(Icons.logout),
+            Icon(Icons.share),
             Text(
               "Share App",
               style: TextStyle(color: WHITE, fontWeight: FontWeight.w700),

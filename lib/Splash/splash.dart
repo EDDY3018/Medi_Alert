@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_alert/auth/Login/view/login_page.dart';
 import 'package:medi_alert/auth/Register/view/register_page.dart';
 import 'package:medi_alert/utils/colors.dart';
 import 'package:medi_alert/utils/navigator.dart';
+
+import '../utils/btNav.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -14,6 +17,23 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void _checkUserLoggedIn() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      customNavigator(
+          context,
+          BTNAV(
+            pageIndex: 0,
+          ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +87,7 @@ class _SplashState extends State<Splash> {
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: GestureDetector(
                   onTap: () {
+                    _checkUserLoggedIn();
                     customNavigator(context, LoginPage());
                   },
                   child: Column(

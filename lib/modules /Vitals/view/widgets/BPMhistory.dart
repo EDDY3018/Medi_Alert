@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:medi_alert/modules%20/BMI/view/bmi_page.dart';
 import 'package:share/share.dart';
+
+import '../../../../utils/navigator.dart';
+import '../vitals_page.dart';
 
 class BPMRecord {
   final DateTime timestamp;
@@ -31,39 +35,52 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BPM History'),
-      ),
-      body: widget.history.isEmpty
-          ? const Center(
-              child: Text('No records found.'),
-            )
-          : ListView.builder(
-              itemCount: widget.history.length,
-              itemBuilder: (context, index) {
-                final record = widget.history[index];
-                return Card(
-                  child: ListTile(
-                    title: Text('BPM: ${record.bpm}'),
-                    subtitle: Text('Measured on: ${record.timestamp}'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.share),
-                          onPressed: () => _shareRecord(record),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => _deleteRecord(index),
-                        ),
-                      ],
+    return WillPopScope(
+       onWillPop: () async {
+        customNavigator(context, BmiPage());
+
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('BPM History'),
+           leading: IconButton(
+            onPressed: () {
+              customNavigator(context, BmiPage());
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
+        body: widget.history.isEmpty
+            ? const Center(
+                child: Text('No records found.'),
+              )
+            : ListView.builder(
+                itemCount: widget.history.length,
+                itemBuilder: (context, index) {
+                  final record = widget.history[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text('BPM: ${record.bpm}'),
+                      subtitle: Text('Measured on: ${record.timestamp}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.share),
+                            onPressed: () => _shareRecord(record),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => _deleteRecord(index),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

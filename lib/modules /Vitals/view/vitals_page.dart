@@ -25,7 +25,7 @@ class _VitalsPageState extends State<VitalsPage> {
     return Scaffold(
       drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: WHITE,
+        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
         elevation: 0,
         child: Image.asset(
           'assets/emegency.png',

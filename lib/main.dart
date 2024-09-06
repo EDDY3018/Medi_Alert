@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'modules /BMI/models/bmiProvider.dart';
+import 'modules /Exercise/model/exModel.dart';
 import 'modules /Vitals/model/appointment.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AppointmentProvider()),
         ChangeNotifierProvider(create: (_) => BmiProvider()),
+           ChangeNotifierProvider(create: (_) => ExerciseProvider()),
       ],
       child: MyApp(),
     ),

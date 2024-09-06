@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:medi_alert/modules%20/Vitals/view/vitals_page.dart';
+import 'package:medi_alert/utils/btNav.dart';
 import 'package:medi_alert/utils/navigator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -109,116 +110,131 @@ class _RespiratoryRatePageState extends State<RespiratoryRatePage> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.sizeOf(context).width;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Check Respiratory Rate'),
-        leading: GestureDetector(
-            onTap: () {
-              customNavigator(context, VitalsPage());
-            },
-            child: Icon(Icons.arrow_back, color: Colors.black, size: 30)),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
+    return WillPopScope(
+      onWillPop: () async {
+        customNavigator(
+            context,
+            BTNAV(
+              pageIndex: 1,
+            ));
+
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Check Respiratory Rate'),
+          leading: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => RespiratoryRateHistoryPage(),
-                ));
+                customNavigator(
+                    context,
+                    BTNAV(
+                      pageIndex: 1,
+                    ));
               },
-              child: Icon(Icons.history, color: Colors.black, size: 30),
+              child: Icon(Icons.arrow_back, color: Colors.black, size: 30)),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => RespiratoryRateHistoryPage(),
+                  ));
+                },
+                child: Icon(Icons.history, color: Colors.black, size: 30),
+              ),
             ),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          // Camera preview
-          Positioned.fill(
-            child: FutureBuilder<void>(
-              future: _initializeControllerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return CameraPreview(_cameraController!);
-                } else {
-                  return Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Tap on Start Detection to show Camera. ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
+          ],
+        ),
+        body: Stack(
+          children: [
+            // Camera preview
+            Positioned.fill(
+              child: FutureBuilder<void>(
+                future: _initializeControllerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return CameraPreview(_cameraController!);
+                  } else {
+                    return Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Tap on Start Detection to show Camera. ',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        Icon(Icons.photo_camera_front)
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
-          // Overlay with text and circular indicator
-          Positioned(
-            top: 20,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Detecting face and chest.\nLook at the camera and remain still.',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomCircularIndicator(
-                        percent: _percent,
+                          Icon(Icons.photo_camera_front)
+                        ],
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        '${(_percent * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(color: Colors.white, fontSize: 24),
-                      ),
-                    ],
-                  ),
-                ],
+                    );
+                  }
+                },
               ),
             ),
-          ),
-          // Start/Stop Detection button
-          Positioned(
-              bottom: 20,
+            // Overlay with text and circular indicator
+            Positioned(
+              top: 20,
               left: 20,
               right: 20,
-              child: GestureDetector(
-                  onTap: _isDetecting ? _stopDetection : _startDetection,
-                  child: Container(
-                    width: double.infinity,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: _isDetecting ? Colors.red : Colors.green),
-                    child: Center(
-                        child: Text(
-                      _isDetecting ? 'Stop Detecting' : 'Start Detection',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700),
-                    )),
-                  )))
-        ],
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Detecting face and chest.\nLook at the camera and remain still.',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomCircularIndicator(
+                          percent: _percent,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          '${(_percent * 100).toStringAsFixed(0)}%',
+                          style: TextStyle(color: Colors.white, fontSize: 24),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Start/Stop Detection button
+            Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: GestureDetector(
+                    onTap: _isDetecting ? _stopDetection : _startDetection,
+                    child: Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: _isDetecting ? Colors.red : Colors.green),
+                      child: Center(
+                          child: Text(
+                        _isDetecting ? 'Stop Detecting' : 'Start Detection',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w700),
+                      )),
+                    )))
+          ],
+        ),
       ),
     );
   }
